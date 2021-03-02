@@ -48,17 +48,18 @@ createAutoComplete({
     root: document.querySelector('.left-autocomplete'),
     onOptionSelect(movie) {
         document.querySelector('.tutorial').classList.add('is-hidden');
-        return onMovieselect(movie, "left");
+        onMovieselect(movie, document.querySelector('#left-summary'), 'left');
     },
 
 });
 createAutoComplete({
-
     ...autocompleteConfig,
     root: document.querySelector('.right-autocomplete'),
     onOptionSelect(movie) {
-        return onMovieselect(movie, "right");
+        document.querySelector('.tutorial').classList.add('is-hidden');
+        onMovieselect(movie, document.querySelector('#right-summary'), 'right');
     },
+
 });
 
 
@@ -66,8 +67,9 @@ createAutoComplete({
 
 let leftMovie;
 let rightMovie;
-const onMovieselect = async (movieID, side) => {
-    console.log("this is side---> ", side);
+
+const onMovieselect = async (movieID, summaryElement, side) => {
+
     const response = await axios.get('http://www.omdbapi.com/', {
         params: {
             apikey: '94867394',
@@ -75,30 +77,27 @@ const onMovieselect = async (movieID, side) => {
             i: movieID
         }
     });
-    document.querySelector('#summary').innerHTML = movieTemplate(response.data)
+
+
+    summaryElement.innerHTML = movieTemplate(response.data);
     // if (response.data.Error) {
     //     return []
     // }
-
-
-    // if (side === "left") {
-    //     leftMovie = response.data
-    //     console.log("SOY IZQUIERDA");
-
-    // } else {
-    //     rightMovie = response.data
-    //     console.log("SOY DERECHA");
-    // }
-    // if (leftMovie && rightMovie) {
-    //     runComparison();
-    // }
+    if (side === "left") {
+        leftMovie = response.data
+    } else {
+        rightMovie = response.data
+    }
+    if (leftMovie && rightMovie) {
+        runComparison();
+    }
     // return response.data
 
 };
 
 const runComparison = () => {
 
-
+    console.log("TIME FOR COMPARISON");
 }
 
 
@@ -106,11 +105,11 @@ const runComparison = () => {
 
 const movieTemplate = (movieDetail) => {
 
-    let dollars = parseInt(movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, ''))
-    let metascore = parseInt(movieDetail.Metascore)
+    // let dollars = parseInt(movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, ''))
+    // let metascore = parseInt(movieDetail.Metascore)
 
 
-    console.log("box office  ", dollars, metascore);
+
     return `
     <article class="media">
       <figure class="media-left">
@@ -130,12 +129,12 @@ const movieTemplate = (movieDetail) => {
         <p class = "subtitle"> Awards </p> 
       
     </article>
-    <article class = "notification is-primary box-office" data-box-office=${dollars}>
+    <article class = "notification is-primary box-office"> 
     <p class = "title"> ${movieDetail.BoxOffice} </p> 
     <p class = "subtitle"> Box  Office </p> 
   
     </article>
-    <article class = "notification is-primary metascore" data-metascore = "${metascore}" >
+    <article class = "notification is-primary metascore" >
     <p class = "title"> ${movieDetail.Metascore} </p> 
     <p class = "subtitle"> Metascorte</p> 
 
