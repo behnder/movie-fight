@@ -7,7 +7,7 @@ const createAutoComplete = ({
 }) => {
     root.innerHTML = `
     <label><b>Search for a Movie</b></label>
-    <input class="input"/>
+    <input class="input" value="star war"/>
         <div class = "dropdown">
             <div class= "dropdown-menu">
                 <div class="dropdown-content results"></div>
@@ -48,11 +48,9 @@ const createAutoComplete = ({
             option.innerHTML = renderOption(item);
             option.addEventListener('click', async () => {
                 dropdown.classList.remove('is-active')
-                document.querySelector(".is-half").style.display = "none"
-
                 input.value = item.Title;
                 let item2 = await onOptionSelect(item.imdbID)
-                contentWrapper.innerHTML = movieTemplate(item2)
+                // contentWrapper.innerHTML = movieTemplate(item2)
             })
             resultsWrapper.appendChild(option)
         }

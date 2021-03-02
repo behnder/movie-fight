@@ -46,16 +46,28 @@ const autocompleteConfig = {
 createAutoComplete({
     ...autocompleteConfig,
     root: document.querySelector('.left-autocomplete'),
+    onOptionSelect(movie) {
+        document.querySelector('.tutorial').classList.add('is-hidden');
+        return onMovieselect(movie, "left");
+    },
+
 });
 createAutoComplete({
+
     ...autocompleteConfig,
     root: document.querySelector('.right-autocomplete'),
+    onOptionSelect(movie) {
+        return onMovieselect(movie, "right");
+    },
 });
 
 
 // ---------------------------------------------------
 
-const onMovieselect = async (movieID) => {
+let leftMovie;
+let rightMovie;
+const onMovieselect = async (movieID, side) => {
+    console.log("this is side---> ", side);
     const response = await axios.get('http://www.omdbapi.com/', {
         params: {
             apikey: '94867394',
@@ -63,22 +75,42 @@ const onMovieselect = async (movieID) => {
             i: movieID
         }
     });
-    if (response.data.Error) {
-        return []
-    }
-    return response.data
+    document.querySelector('#summary').innerHTML = movieTemplate(response.data)
+    // if (response.data.Error) {
+    //     return []
+    // }
+
+
+    // if (side === "left") {
+    //     leftMovie = response.data
+    //     console.log("SOY IZQUIERDA");
+
+    // } else {
+    //     rightMovie = response.data
+    //     console.log("SOY DERECHA");
+    // }
+    // if (leftMovie && rightMovie) {
+    //     runComparison();
+    // }
+    // return response.data
 
 };
 
+const runComparison = () => {
+
+
+}
+
+
+
+
 const movieTemplate = (movieDetail) => {
 
-    let awards
-    if (movieDetail.Awards === "N/A") {
-        awards = "No Awards for this movie"
+    let dollars = parseInt(movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, ''))
+    let metascore = parseInt(movieDetail.Metascore)
 
-    } else {
-        awards = movieDetail.Awards
-    }
+
+    console.log("box office  ", dollars, metascore);
     return `
     <article class="media">
       <figure class="media-left">
@@ -93,17 +125,17 @@ const movieTemplate = (movieDetail) => {
         </div>
       </div>
     </article>
-    <article class = "notification is-primary">
-        <p class = "title"> ${awards} </p> 
+    <article class = "notification is-primary" >
+        <p class = "title awards"> ${movieDetail.Awards} </p> 
         <p class = "subtitle"> Awards </p> 
       
     </article>
-    <article class = "notification is-primary">
+    <article class = "notification is-primary box-office" data-box-office=${dollars}>
     <p class = "title"> ${movieDetail.BoxOffice} </p> 
     <p class = "subtitle"> Box  Office </p> 
   
     </article>
-    <article class = "notification is-primary">
+    <article class = "notification is-primary metascore" data-metascore = "${metascore}" >
     <p class = "title"> ${movieDetail.Metascore} </p> 
     <p class = "subtitle"> Metascorte</p> 
 
