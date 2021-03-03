@@ -7,7 +7,7 @@ const createAutoComplete = ({
 }) => {
     root.innerHTML = `
     <label><b>Search for a Movie</b></label>
-    <input class="input" value="star war"/>
+    <input class="input" value=""/>
         <div class = "dropdown">
             <div class= "dropdown-menu">
                 <div class="dropdown-content results"></div>
